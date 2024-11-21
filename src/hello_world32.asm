@@ -14,5 +14,5 @@ _start:
 
     ; sys_exit(code 1)(status=0)
     mov eax, 1
-    mov ebx, 0 ; EXIT_SUCCESS
+    xor ebx, ebx ; make it 0
     int 0x80
