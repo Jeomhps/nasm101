@@ -1,6 +1,12 @@
 ; Code found on https://cratecode.com/info/x86-assembly-nasm-user-input-output
 ; Write the number 42 to the console
 
+; After some issue in operations.asm file, it seems that this piece of work
+; is only able to convert positive number to string. In case of a negative
+; number it just output 2 to the power 32. A workaround is proposed in 
+; operation.asm simply output - before and make number positive with neg 
+; then just do the conversion as usual.
+
 section .data
     num db 42
 
