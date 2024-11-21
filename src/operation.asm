@@ -3,6 +3,9 @@ section .data
     Yval dd 10         ; Value of Yval
     Zval dd 3          ; Value of Zval
     newline db 0x0A    ; Newline character for cleaner output
+    msg_error db "Error: Division by zero", 0x0A
+    len_error equ $ - msg_error
+    msg_negative db '-', 0
 
 section .bss
     buffer resb 16     ; Buffer to store the result as a string
@@ -44,14 +47,67 @@ _start:
     call convert 
     call print
 
+    ; -------------------------------
+    ; Rval = (Xval * -5) / (Yval % Zval)
+    ; -------------------------------
+
+    ; Calculate Xval * -5
+    mov eax, [Xval]    ; EAX ← Xval
+    mov ecx, -5        ; ECX ← -5
+    imul eax, ecx      ; EAX ← Xval * -5
+
+    ; Save result of Xval * -5
+    push eax           ; Push EAX (numerator) onto the stack
+
+    ; Calculate Yval % Zval
+    mov eax, [Yval]    ; EAX ← Yval (dividend)
+    xor edx, edx       ; Clear EDX before division
+    mov ecx, [Zval]    ; ECX ← Zval (divisor)
+    test ecx, ecx      ; Check if divisor (Zval) is zero
+    jz divide_error    ; Jump to error handler if zero
+    div ecx            ; EAX ← Yval / Zval, EDX ← Yval % Zval
+
+    ; Divide (Xval * -5) by (Yval % Zval)
+    mov ebx, edx       ; EBX ← Yval % Zval (from EDX)
+    test ebx, ebx      ; Check if EBX (divisor) is zero
+    jz divide_error    ; Jump to error handler if zero
+
+    pop eax            ; Restore numerator (Xval * -5)
+    cdq                ; Sign-extend EAX into EDX for signed division
+    idiv ebx           ; EAX ← (Xval * -5) / (Yval % Zval)
+
+    call convert
+    call print 
+
     ; Exit program
     call exit
+
+divide_error:
+    ; Handle division by zero error
+    mov eax, 4         ; sys_write
+    mov ebx, 1         ; stdout
+    mov ecx, msg_error ; Address of error message
+    mov edx, len_error ; Length of error message
+    int 0x80           ; Call kernel
+    call exit          ; Terminate program
 
 convert:
     lea edi, [buffer + 16] ; Point EDI to the end of the buffer
     xor edx, edx           ; Clear remainder (EDX)
+    
+    test eax, eax          ; Check if EAX is negative
+    jns .convert_loop      ; Skip if positive
 
-convert_loop:
+    neg eax                ; Convert EAX to positive
+    push eax
+    mov eax, 4             ; sys_write
+    mov ebx, 1             ; stdout
+    mov ecx, msg_negative  ; Address of '-' character
+    mov edx, 1             ; Length of 1
+    int 0x80               ; Print '-'
+    pop eax
+
+.convert_loop:
     dec edi                ; Move EDI backward to store next character
     xor edx, edx           ; Clear remainder
     mov ecx, 10            ; Divisor (base 10)
@@ -59,7 +115,7 @@ convert_loop:
     add dl, '0'            ; Convert remainder (EDX) to ASCII
     mov [edi], dl          ; Store ASCII digit in buffer
     test eax, eax          ; Check if quotient is zero
-    jnz convert_loop       ; Repeat until all digits are processed
+    jnz .convert_loop       ; Repeat until all digits are processed
     ret                    ; Return to caller
 
 print:
