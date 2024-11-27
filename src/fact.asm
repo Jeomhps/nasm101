@@ -1,6 +1,5 @@
 section .bss
     tab resd 10
-    buffer resb 16
 
 section .text
     global _start
