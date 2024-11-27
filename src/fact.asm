@@ -1,7 +1,3 @@
-section .data
-    newline db 0x0A    ; Newline character for cleaner output
-    msg_negative db '-', 0
-
 section .bss
     tab resd 10
     buffer resb 16
