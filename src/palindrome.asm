@@ -14,8 +14,6 @@ section .data
     SYS_exit equ 1
     EXIT_SUCCESS equ 0
 
-section .bss
-
 section .text
     global _start
 
