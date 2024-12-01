@@ -10,6 +10,7 @@ section .data
     
     SYS_write equ 4
     STDIN equ 1
+
     SYS_exit equ 1
     EXIT_SUCCESS equ 0
 
