@@ -1,8 +1,17 @@
 section .data
-    text db "abqqba"
+    text db "abqcba"
     len equ $ - text
-    yes db "yes", 10
-    no db "no", 10
+    
+    msgPalin db "The string is a palindrome", 10
+    lenPalin equ $ - msgPalin
+    
+    msgNotPalin db "The string is not a palindrome", 10
+    lenNotPalin equ $ - msgNotPalin
+    
+    SYS_write equ 4
+    STDIN equ 1
+    SYS_exit equ 1
+    EXIT_SUCCESS equ 0
 
 section .bss
 
@@ -28,21 +37,21 @@ my_loop:
     jmp my_loop
 
 is_palin:
-    mov eax, 4
-    mov ebx, 1
-    mov ecx, yes
-    mov edx, 4
+    mov eax, SYS_write
+    mov ebx, STDIN
+    mov ecx, msgPalin
+    mov edx, lenPalin
     int 0x80
     jmp end
 
 not_palin:
-    mov eax, 4
-    mov ebx, 1
-    mov ecx, no
-    mov edx, 3
+    mov eax, SYS_write
+    mov ebx, STDIN
+    mov ecx, msgNotPalin
+    mov edx, lenNotPalin
     int 0x80
 
 end:
     mov eax, 1
-    xor ebx, ebx
+    mov ebx, EXIT_SUCCESS
     int 0x80
