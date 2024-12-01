@@ -16,7 +16,7 @@ _start:
 
 my_loop:
     cmp eax, ebx
-    jl is_palin
+    jbe is_palin
 
     mov cl, [text + eax]
     mov dl, [text + ebx]
