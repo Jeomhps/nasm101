@@ -52,6 +52,6 @@ not_palin:
     int 0x80
 
 end:
-    mov eax, 1
+    mov eax, SYS_exit
     mov ebx, EXIT_SUCCESS
     int 0x80
