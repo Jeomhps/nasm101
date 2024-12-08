@@ -9,7 +9,7 @@ section .data
     lenNotPalin equ $ - msgNotPalin
     
     SYS_write equ 4
-    STDIN equ 1
+    STDOUT equ 1
 
     SYS_exit equ 1
     EXIT_SUCCESS equ 0
@@ -37,7 +37,7 @@ my_loop:
 
 is_palin:
     mov eax, SYS_write
-    mov ebx, STDIN
+    mov ebx, STDOUT
     mov ecx, msgPalin
     mov edx, lenPalin
     int 0x80
@@ -45,7 +45,7 @@ is_palin:
 
 not_palin:
     mov eax, SYS_write
-    mov ebx, STDIN
+    mov ebx, STDOUT
     mov ecx, msgNotPalin
     mov edx, lenNotPalin
     int 0x80
