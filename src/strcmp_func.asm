@@ -54,8 +54,8 @@ strcmp:
 
 my_loop:
     mov al, [esi]
-    mov bl, [edi]
-    cmp al, bl
+    mov dl, [edi]
+    cmp al, dl
     
     jne isNotEqual
     
@@ -65,11 +65,15 @@ my_loop:
     loop my_loop
 
 isEqual:
+    push ebx
+
     mov eax, SYS_write
     mov ebx, STDOUT
     mov ecx, msgIsEq
     mov edx, lenEq
     int 0x80
+    
+    pop ebx
     
     pop ebp
 
@@ -77,11 +81,15 @@ isEqual:
     ret
 
 isNotEqual:
+    push ebx
+
     mov eax, SYS_write
     mov ebx, STDOUT
     mov ecx, msgIsNotEq
     mov edx, lenNotEq
     int 0x80
+    
+    pop ebx
     
     pop ebp
 
