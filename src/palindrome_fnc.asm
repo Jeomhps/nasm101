@@ -31,6 +31,8 @@ _start:
     push text
     
     call palin
+
+    add esp, 8 ; Clean the stack from the args
     
     jmp exit
     
